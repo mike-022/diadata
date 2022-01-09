@@ -36,6 +36,7 @@ func init() {
 	Exchanges[dia.BitfinexExchange] = dia.Exchange{Name: dia.BitfinexExchange, Centralized: true, WatchdogDelay: watchdogDelay}
 	Exchanges[dia.BitBayExchange] = dia.Exchange{Name: dia.BitBayExchange, Centralized: true, WatchdogDelay: watchdogDelay}
 	Exchanges[dia.BittrexExchange] = dia.Exchange{Name: dia.BittrexExchange, Centralized: true, WatchdogDelay: watchdogDelay}
+	Exchanges[dia.ByBitExchange] = dia.Exchange{Name: dia.ByBitExchange, Centralized: true, WatchdogDelay: watchdogDelay}
 	Exchanges[dia.CoinBaseExchange] = dia.Exchange{Name: dia.CoinBaseExchange, Centralized: true, WatchdogDelay: watchdogDelay}
 	Exchanges[dia.HitBTCExchange] = dia.Exchange{Name: dia.HitBTCExchange, Centralized: true, WatchdogDelay: watchdogDelay}
 	Exchanges[dia.SimexExchange] = dia.Exchange{Name: dia.SimexExchange, Centralized: true, WatchdogDelay: watchdogDelay}
@@ -95,6 +96,8 @@ func NewAPIScraper(exchange string, key string, secret string) APIScraper {
 		return NewBinanceScraper(key, secret, Exchanges[dia.BinanceExchange])
 	case dia.BitBayExchange:
 		return NewBitBayScraper(Exchanges[dia.BitBayExchange])
+	case dia.ByBitExchange:
+		return NewByBitScraper(Exchanges[dia.ByBitExchange])
 	case dia.BitfinexExchange:
 		return NewBitfinexScraper(key, secret, Exchanges[dia.BitfinexExchange])
 	case dia.BittrexExchange:
