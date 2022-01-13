@@ -107,7 +107,6 @@ type ByBitPairsResponse struct {
 
 //NewByBitScraper get a scrapper for ByBit exchange
 func NewByBitScraper(exchange dia.Exchange) *ByBitScraper {
-	log.Info("in bybit scraper")
 	s := &ByBitScraper{
 		shutdown:     make(chan nothing),
 		shutdownDone: make(chan nothing),
@@ -164,7 +163,6 @@ func (s *ByBitScraper) mainLoop() {
 		}
 
 		realtimepublicmessage := &ByBitPublicTradeResponse{}
-
 		if publicerr = s.realtimepublic.ReadJSON(&realtimepublicmessage); publicerr != nil {
 			log.Error("something went wrong reading trades")
 			log.Error(err.Error())
@@ -276,7 +274,7 @@ func (s *ByBitScraper) Channel() chan *dia.Trade {
 
 //FetchAvailablePairs returns a list with all available trade pairs
 func (s *ByBitScraper) FetchAvailablePairs() (pairs []dia.Pair, err error) {
-	log.Info("fetching")
+	log.Info("Fetching availible pairs")
 
 	data, err := utils.GetRequest(ByBitSymbolsURL)
 	log.Info(err)
@@ -297,7 +295,7 @@ func (s *ByBitScraper) FetchAvailablePairs() (pairs []dia.Pair, err error) {
 			pairToNormalize := dia.Pair{
 				Symbol:      p.BaseCurrency,
 				ForeignName: p.Name,
-				Exchange:    "ByBit",
+				Exchange:    s.exchangeName,
 			}
 			pair, serr := s.NormalizePair(pairToNormalize)
 			if serr == nil {
@@ -425,11 +423,13 @@ func (s *ByBitScraper) subscribe(trade string) {
 		Args: []string{fmt.Sprintf("trade.%s", trade)},
 	}
 
+	// Subscribing to the realtime public api for USDT trades
 	if strings.Contains(trade, "USDT") {
 		if err := s.realtimepublic.WriteJSON(a); err != nil {
 			log.Println("error when writing ticker - " + trade + err.Error())
 		}
 	} else {
+		// Subscribing to the realtime api for everything else
 		if err := s.realtime.WriteJSON(a); err != nil {
 			log.Println("error when writing ticker - " + trade + err.Error())
 		}
